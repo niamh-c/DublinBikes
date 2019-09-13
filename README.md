@@ -10,18 +10,17 @@ MySQL, Python3.7, Anaconda/Miniconda
 ## Instructions
 1. Install virtual environment and requirements
 <ul>conda create --prefix ./flask/venv python=3.7</ul>
-
-2. Activate the environment
 <ul>conda activate ./flask/venv</ul>
+<ul>pip install -r requirements.txt</ul>
 
-3. Create neccessary database and tables using the following commands:
+2. Create neccessary database and tables using the following commands:
 <ul>mysql -u <username> -p</ul>
 <ul>CREATE DATABASE IF NOT EXISTS bikeInfo</ul>
 <ul>use bikeInfo</ul>
 <ul>source ./bikes.sql;</ul>
 <ul>quit</ul>
   
-4. Create .env file and populate with database and API information
+3. Create .env file and populate with database and API information
 vi ./.env
   
 JCD_API=<API KEY> //Get key from https://developer.jcdecaux.com/#/opendata/vls?page=getstarted <br>
@@ -31,9 +30,9 @@ NAME= //e.g. "root" <br>
 PASSWORD= //e.g. "password" <br>
 WEATHER_API=<API key> //Get key from https://openweathermap.org/forecast5
 
-5. Run scrapers. These need to be run constantly to have up-to-date information
+4. Run scrapers. These need to be run constantly to have up-to-date information
 <ul>nohup python ./scrapers/dynamicBikeMine.py & </ul>
 <ul>nohup python ./scrapers/dynamicWeatherMine.py & </ul>
 
-6. Run the application 
+5. Run the application 
 <ul>python ./flask/run.py</ul>
