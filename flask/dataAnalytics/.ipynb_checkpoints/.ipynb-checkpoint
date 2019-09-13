@@ -1,0 +1,123 @@
+{
+ "cells": [
+  {
+   "cell_type": "code",
+   "execution_count": 2,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "import pandas as pd\n",
+    "import numpy as np\n",
+    "import matplotlib.pyplot as plt\n",
+    "import matplotlib.patches as mpatches\n",
+    "import seaborn as sns\n",
+    "from matplotlib.backends.backend_pdf import PdfPages\n",
+    "%matplotlib inline\n",
+    "import pymysql\n",
+    "from datetime import datetime\n",
+    "import pickle"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "df=weatherinfo\n",
+    "df1=timeinfofromAPP"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "# FORMAT COLUMNS"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "df['last_time'] = df1['last_time'].astype('datetime64[ns]')\n",
+    "df1['last_update'] = df1['last_update'].astype('datetime64[ns]')\n",
+    "df['number']=df['number'].astype(int)\n",
+    "df['day']=df['last_update'].dt.dayofweek\n",
+    "df[\"time\"]=df['last_update'].dt.round('30min')  \n",
+    "df['time']=df[\"time\"].dt.strftime('%H%M')\n",
+    "df=df.drop(['last_update'], 1)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "infile = open('bins_dict','rb')\n",
+    "BINS = pickle.load(infile)\n",
+    "infile.close()\n",
+    "df['bins']=df['time'].replace(BINS)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "#load the correct dictonary using main. Then create a new column using the description as column name.\n",
+    "try:\n",
+    "    infile = open(df.main[0],'rb')\n",
+    "    weather = pickle.load(infile)\n",
+    "    infile.close()\n",
+    "    df[df.main[0]]=weather[df.description[0]]\n",
+    "except IOError:\n",
+    "    infile = open(Mix,'rb')\n",
+    "    weather = pickle.load(infile)\n",
+    "    infile.close()\n",
+    "    df[df.main[0]]=weather[df.description[0]]   "
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "#columnsTitles = feature coefficents that are used in the model.\n",
+    "df = df.reindex(columns=columnsTitles) #drops any column that is not needed"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": []
+  }
+ ],
+ "metadata": {
+  "kernelspec": {
+   "display_name": "Python 3",
+   "language": "python",
+   "name": "python3"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython3",
+   "version": "3.7.2"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 2
+}

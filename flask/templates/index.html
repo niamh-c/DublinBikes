@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang = "en">
+<head>
+    <meta charset="utf-8">
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/jquery/latest/jquery.min.js"></script>
+    
+    <!--*********************************Stylesheets*************************************************-->
+    <!--bootstrap formatting CSS for mobiles-->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!--bootstrap CSS-->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+          integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <!--static stylesheets-->
+    <link rel="stylesheet" type="text/css" href="/static/styles/index.css">
+    
+	<!--********************************Webpage Title*******************************************-->
+    <title>Get Biking Dublin</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+</head>
+
+<body style="height:100vh;">
+
+<!--**************************************HTML Page Outline*********************************************************-->
+
+<!-- controls overall page -->
+<div class="container-fluid" style="min-width:700px;">
+    <!-- Nav Bar -->
+    <!-- This is the set of images aligned at the top of the page -->
+    <div class="d-flex row" style=" border-style: solid; border-width: 4px; border-color: white; background-color: #0f798a; margin-bottom: 20px; overflow:hidden">
+        <!--  background-color: #128ea1; or #0f798a -->
+        <div class="col-3" style="height:20vh;">
+            <div class="d-flex justify-content-center" style="padding-bottom: 5px; padding-top:15px;">
+                <figure class="figure" style="text-align: center">
+                    <img src="/static/images/ucd.gif" alt="UCD Crest" height="110px">
+                    <figcaption class="figure-caption text-center" style="color:white;"> Remember to wear a helmet and light up!<br>Cycle safe!</figcaption>
+                </figure>
+            </div>
+        </div>
+        <div class="col-6" style="max-height:200px; padding-top:10px">
+            <div class="d-flex justify-content-center">
+                <img src="/static/images/dubBikeLogoNew.png" alt="DBikes Logo" height="120">
+            </div>
+            <h2 style="color:white; font-family: Apercu, sans-serif;" align="center"> Welcome to Get Biking Dublin</h2>
+
+        </div>
+        <div class="col-3" style="max-height:200px; ">
+            <div class="d-flex justify-content-center" style="margin-top: 9%">
+                <div id = "weatherWidget" style = "width: 260px; height:150px;">
+                    <a class="weatherwidget-io"  href="https://forecast7.com/en/53d35n6d26/dublin/" data-label_1="DUBLIN" data-label_2="WEATHER" data-font="Arial Black"; data-icons="Climacons animated" data-mode="Current" data-theme="original" data-basecolor="" >DUBLIN WEATHER</a>
+
+                    <script>
+                        !function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src='https://weatherwidget.io/js/widget.min.js';fjs.parentNode.insertBefore(js,fjs);}}(document,'script','weatherwidget-io-js');
+                    </script>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- This section controls the row with buttons -->
+    <div class="row d-flex justify-content-around">
+        <!-- Filter options for the map  -->
+        <div class="col-6 flex-column text-center" style = "color:white; min-width:370px;">
+            <b style="float:left; margin-left:25%;">Show Stations With:</b><br>Bikes Available
+            <label class="switch">
+                <input id='Toggle1' type="checkbox"
+                       onclick="toggle1Change(this)" value=">=0">
+                <span class="toggle round"></span>
+            </label>
+
+            Stands Available
+            <label class="switch">
+                <input id='Toggle2' type="checkbox"
+                       onclick="toggle2Change(this)" value=">=0">
+                <span class="toggle round"></span>
+            </label>
+            <select id="stations" onchange = selectStation(this.value)> </select>
+        </div>
+
+        <!-- This controls what is displayed to the left of the map -->
+        <div class="col-6 flex-column text-center" style="padding: 10px 0 5px 0;">
+    <span>
+    <button style="margin-right:5%;" id="predictCreate" onclick="buildPrediction()">Predict Bike Availability</button></span>
+            <button style="visibility: hidden; margin-right:5%;" id="mylocation" onclick="FindLocation()">Find My Nearest Station</button>
+        </div>
+    </div>
+
+    <!-- This section controls the row with map and charts -->
+    <div class="row">
+
+        <div class="col-6">
+            <div id="googleMap" style="width:100%;height:570px; margin:20px;"><br></div>
+
+        </div>
+
+        <div class="col-6">
+            <!-- This section determines which div is displayed to the right of the map -->
+            <div id = 'directionsWrapper' style = "position: relative">
+
+
+                <!-- On load and on reset -->
+                <div class="col" id='base' style="margin: 25% 0 0 0;">
+                    <p class="header" >
+                        Click on a Bike Station icon to display information about the bikes and stands available.
+                    </p>
+                </div>
+
+
+                <!-- Display bikes available prediction -->
+                <div id='chart' style="display: none; margin-top: 8%;">
+                    <div id="myChartDiv" style ="width:100%; height:500px;">
+                        <canvas id="myChart"></canvas>
+                    </div></div>
+
+                <!-- This section shows directions to your nearest station -->
+                <div id='directionsPanel' style="overflow:scroll; position:absolute; margin-left:20%; margin-right: 20%; margin-top: 20px; display:none; max-height: 500px;">
+                    <p style = "background: #094e58; color: white;" id="stationName"></p>
+                </div>
+
+                <!-- This section allows you to enter info for predictions -->
+                <div class="col header" id = 'predictionBox' style = 'position:absolute; padding: 2px; display: none; text-align: center; margin-top: 10%;'>
+                    <div style="display: inline-block;">
+                        <h1 style="color: black; font:inherit; font-size:25px; margin-top:20px;"><b>Prediction Model Options:</b> </h1>
+                        <br>
+
+                        <select id='stations2' style="margin-right:20%; width:75%;"></select>
+                        <br><br>
+                        <!-- Drop down menu for stations, this could be changed to a text input later down the line -->
+                        <div>
+                            <div style="float:left;">
+                                <input  style="margin-top: 15px;" id ='dateField' type='text' name='daterange' value=''/>
+                                <br><br>
+                                <input id="timepicker" type="time" value="12:00:00" step="900">
+                                <br><br>
+                            </div>
+                            <button  style="float:right;  margin-top:50px; margin-left:20px" id="submitPredictOptions" onclick="callPrediction()">Submit!</button>
+                        </div>
+
+                    </div>
+                </div>
+                
+                <!-- This section shows prediction results -->
+                <div class='flex-row'>
+                <div class='col-12' id='predictionResults' style = 'padding: 1px; display: none; margin-bottom:0px'>
+                </div><div class='col-12' id="myPredictionsChartDiv" style ="display: none; width:98%; height:100%;">
+                        <canvas id="myPredictionsChart"></canvas>
+                    </div></div>
+
+            </div>
+            <div class="col align-self-center text-center" id="predictionresetrow" style="position: absolute; bottom:5px; padding-right: 0;
+  padding-left: 0;display: none; max-width: 95% ">
+            <span><button  style="margin-right:4%;" onclick="buildPrediction()">Make Another Prediction</button><button style="margin-right:5%;" onclick="resetMap()">Reset Options</button></span></div>
+            <div id="resetrow" style="position: absolute; bottom:70px; margin-left: 40%; display:block"><button style="visibility: hidden;" id="resetButton" onclick="resetMap()">Reset Options</button></div>
+        </div>
+    </div>
+   <div class="navbar fixed-bottom" style=" margin-right:-15px; margin-left:-15px; border-top: 4px solid white;  background-color: #0f798a;">
+    <div class='col 12' style=" text-align:center "><p style="margin-bottom:0px;">&copy;<script type="text/javascript"> document.write(new Date().getFullYear());
+</script> Get Biking Dublin</p></div></div> 
+</div>
+
+<!--path to date_fns library-->
+<script src='https://cdnjs.cloudflare.com/ajax/libs/date-fns/1.9.0/date_fns.min.js'></script>
+
+<script>
+    var markers;
+    var markersArray = [];
+    var markerCluster;
+    var flag = false;
+    var lastMarkerClicked = "";
+    var map;
+    var LocationWindow;
+    var directionsService;
+    var directionsDisplay;
+
+</script>
+<!--**********************************Map Functionality*************************************************************-->
+<!-- Holds all the javascript for map functionality -->
+<script type="text/javascript" src="{{ url_for('static', filename='myMap.js') }}"></script>
+
+
+<!-- Fixes puncuattion mistakes  javascript. !!Must be loaded before the dropdown menus as it is called for the station names -->
+<script type="text/javascript" src="{{ url_for('static', filename='punctuation.js') }}"></script>
+
+<!-- Creates the station dropdown menus -->
+<script>
+    let dropdown = $('#stations');
+    let dropdown2 = $('#stations2');
+    dropdown.empty();
+    dropdown.append('<option selected="true" disabled>Choose a Station</option>');
+    dropdown2.empty();
+    dropdown2.append('<option selected="true" disabled>Choose a Station</option>');
+    dropdown.prop('selectedIndex', 0);
+    dropdown2.prop('selectedIndex', 0);
+    const url = '/static/Dublin.json';
+    // Populate dropdown with list of stations
+    $.getJSON(url, function (data) {
+        $.each(data, function (key, entry) {
+            var selectName = lowerCaseMe(entry.name);
+            dropdown.append($('<option></option>').attr('value', selectName).text(selectName));
+            dropdown2.append($('<option></option>').attr('value', selectName).text(selectName));
+        })
+    });
+    var currentDate = new Date();
+    var endDate = new Date();
+    var numberOfDaysToAdd = 4;
+    currentDate.setDate(currentDate.getDate() + 1);
+    endDate.setDate(currentDate.getDate() + numberOfDaysToAdd);
+    $(function() {
+        $('input[name="daterange"]').daterangepicker({
+            singleDatePicker: true,
+            showDropdowns: true,
+            minDate: currentDate,
+            maxDate: endDate
+
+        });
+    });
+</script>
+
+<!--path to markercluster.js file-->
+<script type=text/javascript src="{{url_for('static',filename='markerclusterer.js')}}"></script>
+
+<!-- Toggles to change marker displays.js -->
+<script type="text/javascript" src="{{ url_for('static', filename='toggles.js') }}"></script>
+
+<!--path to googleMapsJSlibraries.js file-->
+<script async defer
+        src="https://maps.googleapis.com/maps/api/js?libraries=geometry,places&key=AIzaSyCnvsYJZCXjLApmWJphd30WFDJRVhasGI8&callback=myMap">
+    type = "text/javascript"
+</script>
+
+<!--**************************************Button/Marker Functionality*********************************************************-->
+
+<!-- Reset Options and Map javascript -->
+<script type="text/javascript" src="{{ url_for('static', filename='resetoptions.js') }}"></script>
+
+<!--**************************************Find My Location*********************************************************-->
+<!-- find location javascript -->
+<script type="text/javascript" src="{{ url_for('static', filename='findlocation.js') }}"></script>
+
+
+<!-- ************************************Mean Graphs************************************************* -->
+<!-- Graphs displaying means graph when marker is clicked javascript -->
+<script type="text/javascript" src="{{ url_for('static', filename='meanchart.js') }}"></script>
+
+<!-- library for javascript graph-->
+<script async defer src ="https://cdn.jsdelivr.net/npm/chart.js@2.8.0/dist/Chart.min.js"></script>
+
+
+<!-- *************************************Predictions Box Functionality************************************************ -->
+
+<script type="text/javascript" src="{{ url_for('static', filename='predictions.js') }}"></script>
+
+<!--datePicker for javascript-->
+<script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+<script>
+    $(document).ready(function () {
+        $('input:checkbox').prop('checked', false);
+    });
+
+</script>
+
+<!-- ************************************Bootstrap************************************************* -->
+
+<!--path to cloudflare JS file, needed for Bootstrap-->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+        integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+        crossorigin="anonymous"></script>
+
+<!--path to bootstrap JS file-->
+<script async defer src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+        integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+        crossorigin="anonymous"></script>
+
+
+</body>
+
+</html>

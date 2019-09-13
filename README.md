@@ -1,0 +1,39 @@
+# SoftEng2019Proj
+Available on http://ec2-107-20-121-105.compute-1.amazonaws.com/
+
+## Introduction
+This web application shows the availability of Dublin Bikes around the city. It predicts the availability of bikes at every station upto four days into the future.
+
+## Prerequisites
+MySQL, Python3.7, Anaconda/Miniconda
+
+## Instructions
+1. Install virtual environment and requirements
+<ul>conda create --prefix /SoftEng2019Proj/flask/venv python=3.7</ul>
+
+2. Activate the environment
+<ul>conda activate ./SoftEng2019Proj/flask/venv</ul>
+
+3. Create neccessary database and tables using the following commands:
+<ul>mysql -u <username> -p</ul>
+<ul>CREATE DATABASE IF NOT EXISTS bikeInfo</ul>
+<ul>use bikeInfo</ul>
+<ul>source ./SoftEng2019Proj/bikes.sql;</ul>
+<ul>quit</ul>
+  
+4. Create .env file and populate with database and API information
+vi ./SoftEng2019Proj/.env
+  
+JCD_API=<API KEY> //Get key from https://developer.jcdecaux.com/#/opendata/vls?page=getstarted <br>
+HOST= // e.g. 127.0.0.1 <br>
+DB="bikeInfo" <br>
+NAME= //e.g. "root" <br>
+PASSWORD= //e.g. "password" <br>
+WEATHER_API=<API key> //Get key from https://openweathermap.org/forecast5
+
+5. Run scrapers. These need to be run constantly to have up-to-date information
+<ul>nohup python ./SoftEng2019Proj/scrapers/dynamicBikeMine.py & </ul>
+<ul>nohup python ./SoftEng2019Proj/scrapers/dynamicWeatherMine.py & </ul>
+
+6. Run the application 
+<ul>python ./SoftEng2019Proj/flask/run.py</ul>
