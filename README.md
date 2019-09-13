@@ -36,3 +36,8 @@ WEATHER_API=<API key> //Get key from https://openweathermap.org/forecast5
 
 5. Run the application 
 <ul>python ./flask/run.py</ul>
+
+## Team
+ankhitp
+philip-mcgrath
+niamh-c
