@@ -9,20 +9,20 @@ MySQL, Python3.7, Anaconda/Miniconda
 
 ## Instructions
 1. Install virtual environment and requirements
-<ul>conda create --prefix /SoftEng2019Proj/flask/venv python=3.7</ul>
+<ul>conda create --prefix ./flask/venv python=3.7</ul>
 
 2. Activate the environment
-<ul>conda activate ./SoftEng2019Proj/flask/venv</ul>
+<ul>conda activate ./flask/venv</ul>
 
 3. Create neccessary database and tables using the following commands:
 <ul>mysql -u <username> -p</ul>
 <ul>CREATE DATABASE IF NOT EXISTS bikeInfo</ul>
 <ul>use bikeInfo</ul>
-<ul>source ./SoftEng2019Proj/bikes.sql;</ul>
+<ul>source ./bikes.sql;</ul>
 <ul>quit</ul>
   
 4. Create .env file and populate with database and API information
-vi ./SoftEng2019Proj/.env
+vi ./.env
   
 JCD_API=<API KEY> //Get key from https://developer.jcdecaux.com/#/opendata/vls?page=getstarted <br>
 HOST= // e.g. 127.0.0.1 <br>
@@ -32,8 +32,8 @@ PASSWORD= //e.g. "password" <br>
 WEATHER_API=<API key> //Get key from https://openweathermap.org/forecast5
 
 5. Run scrapers. These need to be run constantly to have up-to-date information
-<ul>nohup python ./SoftEng2019Proj/scrapers/dynamicBikeMine.py & </ul>
-<ul>nohup python ./SoftEng2019Proj/scrapers/dynamicWeatherMine.py & </ul>
+<ul>nohup python ./scrapers/dynamicBikeMine.py & </ul>
+<ul>nohup python ./scrapers/dynamicWeatherMine.py & </ul>
 
 6. Run the application 
-<ul>python ./SoftEng2019Proj/flask/run.py</ul>
+<ul>python ./flask/run.py</ul>
